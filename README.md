@@ -1,1 +1,1 @@
-flask_template
+a simple todolist writen by flask
