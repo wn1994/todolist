@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User info</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#submitId").click(function () {
+                $.ajax({
+                    url: document.URL,
+                    contentType: 'application/json; charset=UTF-8',
+                    dataType: 'json',
+                    method: 'PUT',
+                    data: JSON.stringify({
+                        'password': $('input:password[name="password"]').val(),
+                        'name': $('input:text[name="name"]').val(),
+                        'age': $('input:text[name="age"]').val(),
+                        'email': $('input:text[name="email"]').val()
+                    }),
+                    success: function (data) {
+                        if (data === 'password can not be empty')
+                            alert(data);
+                        else {
+                            $('input:text[name="name"]').val(data.name);
+                            $('input:text[name="age"]').val(data.age);
+                            $('input:text[name="email"]').val(data.email);
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+{% if result.get('res_code','') %}
+    password:<br>
+    <input type="password" name="password"><br>
+    name:<br>
+    <input type="text" name="name" value={{ result['data'].get('name','') }}><br>
+    age:<br>
+    <input type="text" name="age" value={{ result['data'].get('age','') }}><br>
+    email:<br>
+    <input type="text" name="email" value={{ result['data'].get('email','') }}>
+    <br><br>
+    <button id="submitId" type="button" onclick="">提交</button>
+    <button type="button" onclick="location.href='http://'+document.domain+':'+window.location.port">
+        返回主页
+    </button>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    <script>
+        function getPhoneId() {
+            let cookies = document.cookie;
+            let start = cookies.indexOf("phone_id=");
+            if (start === -1) {
+                alert("The cookie not found");
+            }
+            start = cookies.indexOf("=", start) + 1;
+            let end = cookies.indexOf(";", start);
+            if (end === -1) {
+                end = cookies.length;
+            }
+            return cookies.substring(start, end);
+        }
+
+        function getContentUrl(phoneId) {
+            document.getElementById("myForm").action = "user/" + phoneId + '/content';
+        }
+
+        function getInfoUrl(phoneId) {
+            return 'http://' + document.domain + ':' + window.location.port + '/user/' + getPhoneId() + '/info'
+        }
+    </script>
+</head>
+<body>
+{% if result.get('res_code','') == 201 %}
+    {% for item in result.get('items','') %}
+        <div>
+            {{ item['content'] }}<br>
+            {{ ('done' if item['done_tag'] == 1 else 'undo') }}
+            <button type="button"
+                    onclick="{location.href='/user/{{ item['phone_id'] }}/content/{{ item['content_id'] }}'}">修改
+            </button>
+        </div>
+        <br>
+    {% endfor %}
+{% endif %}
+{#使用cookie获取提交url,不用result中的phone_id是因为在最开始,可能没有content条目,result返回空,无法获取phone_id#}
+<form id="myForm" action="" method="POST" onSubmit="getContentUrl(getPhoneId())">
+    <p>添加条目: <input type="text" name="content"/></p>
+    <input type="submit" value="提交"/><br><br>
+    <button type="button" onclick="location.href=getInfoUrl()">修改信息</button>
+</body>
+</html>

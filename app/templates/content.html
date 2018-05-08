@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#submitId").click(function () {
+                $.ajax({
+                    url: document.URL,
+                    method: 'PUT',
+                    contentType: 'application/json; charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        'content': $('input:text[name="content"]').val(),
+                        'done_tag': $('input:radio[name="done_tag"]:checked').val()
+                    }),
+                    success: function (data) {
+                        if (data.done_tag === 1) {
+                            $("#status").text('done');
+                        }
+                        else {
+                            $('#status').text('undo');
+                        }
+                        $('input:text[name="content"]').val(data.content);
+                    }
+                })
+            })
+            $("#deleteId").click(function () {
+                $.ajax({
+                    url: document.URL,
+                    method: 'DELETE',
+                    dataType: 'json'
+                })
+            })
+         });
+    </script>
+</head>
+<body>
+{% if result.get('res_code','') == 201 %}
+    content:<br>
+    <input type="text" name="content" value={{ result['data']['content'] }}>
+    <p id="status">{{ 'done' if result['data']['done_tag'] == 1 else 'undo' }}</p>
+    <input type="radio" name="done_tag" value="1">done
+    <input type="radio" name="done_tag" value="0" checked="checked">undo
+    <br><br>
+    <button id="submitId" type="button">提交</button>
+    <button type="button" onclick="location.href='http://'+document.domain+':'+window.location.port">
+        返回主页
+    </button>
+    <button id="deleteId" type="button" onclick="location.href='http://'+document.domain+':'+window.location.port">
+        删除
+    </button>
+{% endif %}
+</body>
+</html>
